@@ -1,69 +1,51 @@
 #!/bin/bash
 
-# Student Mark Sheet Generator
-
-# Function to validate input
-validate_input() {
-    local input=$1
-    if [[ $input =~ ^[0-9]+$ ]] && [ "$input" -ge 0 ] && [ "$input" -le 100 ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-# Input student details
+# Take input for student details
+echo "Enter Student Name: " # Prompt user to enter student name
 # shellcheck disable=SC2162
-read -p "Enter Student Name: " name
-read -p "Enter Roll Number: " roll
+read name # Read and store the student name in variable 'name'
+echo "Enter Roll Number: " # Prompt user to enter roll number
+# shellcheck disable=SC2162
+read roll # Read and store the roll number in variable 'roll'
 
-s1=0
-s2=0
-s3=0
+# Input marks for three subjects
+echo "Enter marks for Subject 1: " # Prompt user to enter marks for subject 1
+# shellcheck disable=SC2162
+read s1 # Read and store marks for subject 1 in variable 's1'
+echo "Enter marks for Subject 2: " # Prompt user to enter marks for subject 2
+# shellcheck disable=SC2162
+read s2 # Read and store marks for subject 2 in variable 's2'
+echo "Enter marks for Subject 3: " # Prompt user to enter marks for subject 3
+# shellcheck disable=SC2162
+read s3 # Read and store marks for subject 3 in variable 's3'
 
-# Input validation for marks (0-100)
-for subject in 1 2 3; do
-    while true; do
-        read -p "Enter marks for Subject $subject (0-100): " marks
-        if validate_input "$marks"; then
-            declare "s$subject=$marks"
-            break
-        else
-            echo "Invalid input! Please enter a number between 0-100."
-        fi
-    done
-done
+# Calculate total marks
+total=$((s1 + s2 + s3)) # Sum up marks of all three subjects and store in 'total'
 
-# Calculate results
-total=$((s1 + s2 + s3))
-percentage=$(awk "BEGIN {printf \"%.2f\", $total / 3}")
+# Calculate percentage
+percentage=$((total / 3)) # Calculate average percentage and store in 'percentage'
 
 # Determine class
-if (( $(echo "$percentage >= 75" | bc -l) )); then
-    class="Distinction"
-elif (( $(echo "$percentage >= 60" | bc -l) )); then
-    class="First Class"
-elif (( $(echo "$percentage >= 50" | bc -l) )); then
-    class="Second Class"
-elif (( $(echo "$percentage >= 40" | bc -l) )); then
-    class="Pass"
-else
-    class="Fail"
-fi
+if [ $percentage -ge 75 ]; then # If percentage is greater than or equal to 75
 
-# Display output
-cat << EOF
+class="Distinction" # Assign "Distinction" to variable 'class'
+elif [ $percentage -ge 60 ]; then # Else if percentage is greater than or equal to 60
+class="First Class" # Assign "First Class" to variable 'class'
+elif [ $percentage -ge 50 ]; then # Else if percentage is greater than or equal to 50
+class="Second Class" # Assign "Second Class" to variable 'class'
+elif [ $percentage -ge 40 ]; then # Else if percentage is greater than or equal to 40
+class="Pass" # Assign "Pass" to variable 'class'
+else # If percentage is less than 40
+class="Fail" # Assign "Fail" to variable 'class'
+fi # End of if-elif-else block
 
----------------------------
-        MARK SHEET
----------------------------
-Name: $name
-Roll Number: $roll
-Subject 1: $s1
-Subject 2: $s2
-Subject 3: $s3
-Total Marks: $total
-Percentage: ${percentage}%
-Class: $class
----------------------------
-EOF
+# Display result
+echo "---------------------------" # Print a line of dashes
+echo " MARK SHEET " # Print the title "MARK SHEET"
+echo "---------------------------" # Print another line of dashes
+echo "Name: $name" # Print the student's name
+echo "Roll Number: $roll" # Print the student's roll number
+echo "Total Marks: $total" # Print the total marks
+echo "Percentage: $percentage%" # Print the percentage
+echo "Class: $class" # Print the class achieved
+echo "---------------------------" # Print a final line of dashes
