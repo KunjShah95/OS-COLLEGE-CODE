@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo "Enter a number: "
+# shellcheck disable=SC2162
 read number
 
 
